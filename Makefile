@@ -1,5 +1,7 @@
 # Distil a ~0.8B model for one narrow task. `make help` lists everything.
-# Pipeline order: setup -> check -> traces -> dataset -> testset -> eval-teacher -> trainset
+# Invoice task:   setup -> check -> import-invoice -> dataset -> eval-teacher -> trainset (SMOKE=1, then full)
+#                 -> train -> eval-tuned -> deploy -> (start pod) -> eval-base -> invoke -> compare
+# With traces:    setup -> check -> traces -> dataset -> testset -> eval-teacher -> trainset
 #                 -> train -> eval-tuned -> deploy -> (start pod) -> eval-base -> invoke -> compare
 #
 # Common knobs (env vars): YES=1 skip credit prompts | SMOKE=1 small cheap run | FORCE=1 resubmit
@@ -11,7 +13,7 @@ PIPE := scripts/pipeline
 PY := uv run --quiet python
 
 .DEFAULT_GOAL := help
-.PHONY: help setup check traces dataset testset eval-teacher trainset train status \
+.PHONY: help setup check import-invoice traces dataset testset eval-teacher trainset train status \
         eval-base eval-tuned deploy invoke demo compare lint test clean-state
 
 help: ## List targets
@@ -22,6 +24,9 @@ setup: ## One-time setup: brew, git, uv, Python, venv, Distil CLI, .env
 
 check: ## PASS/FAIL per tool, .env key and Distil login
 	@bash scripts/check.sh
+
+import-invoice: ## Fetch the invoice seed data (40 train + 100 test) into data/  (FAST=1: their 4k train set)
+	@bash scripts/import_invoice.sh
 
 traces: ## Export generations from Langfuse -> data/traces.jsonl
 	@$(PY) scripts/langfuse_export.py
@@ -56,8 +61,8 @@ eval-tuned: ## Tuned 0.8B: Distil predictions + live pod latency/cost
 deploy: ## Download the trained adapter to models/ + Runpod instructions (HOSTED=1: Distil hosting)
 	@bash $(PIPE)/70_deploy.sh
 
-invoke: ## Send a sample incident to the served model (FILE=path TARGET=base|tuned|teacher)
-	@$(PY) demo/triage.py --target $(or $(TARGET),tuned) $(or $(FILE),data/samples/incident_db_pool.log)
+invoke: ## Send a sample invoice to the served model (FILE=path TARGET=base|tuned|teacher)
+	@$(PY) demo/triage.py --target $(or $(TARGET),tuned) $(or $(FILE),data/samples/invoice_hold_price.txt)
 
 demo: ## Web demo: base vs tuned side by side on http://127.0.0.1:7860
 	@$(PY) demo/web.py

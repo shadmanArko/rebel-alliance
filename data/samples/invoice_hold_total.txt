@@ -1,0 +1,32 @@
+INVOICE MESSAGE
+From: ar@kessler-industrial.com
+Subject: INV KI-60153 / PO-44571
+
+INVOICE KI-60153   DATE 2026-09-11
+CUST PO: PO-44571
+LN  ITEM | QTY | UNIT | AMOUNT
+1   RIBBON THERM TRANSFER | 5 | 9.95 | 49.75
+2   STRAP STEEL 16MM COIL | 50 | 142.50 | 7,125.00
+3   BOX CORR 600X400X400 | 50 | 3.85 | 192.50
+4   ISO 46 hydraulic fluid, 5 gallon pail | 12 | 86.00 | 1,032.00
+5   Packing tape 48 mm, case of 36 | 10 | 58.00 | 580.00
+6   GLOVES NITRILE BX/100 | 40 | 12.50 | 500.00
+TOTAL DUE USD | 9,506.25
+WE RECEIVED YOUR PAYMENT OF USD 5,033.10 FOR LAST MONTH'S INVOICE, THANK YOU.
+
+PURCHASE ORDER (ERP)
+PO-44571 | Vendor: Kessler Industrial Supply | Freight: not allowed
+1. Corrugated box 600x400x400 | qty 50 | unit USD 3.85
+2. Hydraulic oil ISO 46, 5 gal | qty 12 | unit USD 86.00
+3. Packing tape 48 mm, case of 36 | qty 10 | unit USD 58.00
+4. Steel strapping coil 16 mm | qty 50 | unit USD 142.50
+5. Thermal transfer ribbon | qty 5 | unit USD 9.95
+6. Nitrile gloves, box of 100 | qty 40 | unit USD 12.50
+
+GOODS RECEIPT (ERP) for PO-44571
+1. Corrugated box 600x400x400 | received 50
+2. Hydraulic oil ISO 46, 5 gal | received 12
+3. Packing tape 48 mm, case of 36 | received 10
+4. Steel strapping coil 16 mm | received 50
+5. Thermal transfer ribbon | received 5
+6. Nitrile gloves, box of 100 | received 40

@@ -1,6 +1,6 @@
 # The task, and how to change it
 
-**Current task:** incident triage. The input is raw server logs and the output is one JSON incident report.
+**Current task:** invoice approval (runbook: [invoice.md](invoice.md)). The input is the invoice, the PO and the goods receipt, and the output is `{"decision": ...}`.
 
 Three files define a task. No code changes are needed to swap it:
 

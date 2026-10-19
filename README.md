@@ -1,18 +1,21 @@
-# rebel-alliance: distil a 0.8B model for incident triage
+# rebel-alliance: distil a 0.8B model for invoice approval
 
 ```bash
 git clone https://github.com/shadmanArko/rebel-alliance.git && cd rebel-alliance
 make setup            # brew, git, uv, Python, venv, Distil CLI, .env
 distil auth           # or: distil signup
-# fill in .env (Langfuse keys first)
-make check            # every line should say PASS
+make check            # PASS on every required item
+make import-invoice   # fetch the task data (free); then see docs/invoice.md
 ```
 
-**Task (GTC Berlin Builders Night):** raw server logs in, structured JSON incident report out
-(`severity`, `category`, `affected_service`, `summary`, `probable_root_cause`, `suggested_actions`,
-`requires_escalation`). A big teacher LLM labels the data, and Distil Labs fine-tunes
-**Qwen3.5-0.8B** to do the same job at a fraction of the latency and cost. Everything specific to the
-task is in `config/`. To switch tasks, see [docs/task.md](docs/task.md).
+**Task (GTC Berlin Builders Night):** invoice approval, taken from
+[distil-labs/reasoning-blogpost-benchmark](https://github.com/distil-labs/reasoning-blogpost-benchmark).
+The input is an invoice email, a purchase order and a goods receipt. The output is
+`{"decision": "approve|hold_no_po|hold_quantity|hold_price|hold_total"}`. The teacher (GLM 5.3,
+high thinking) writes the reasoning data, and Distil Labs fine-tunes **Qwen3.5-0.8B** with thinking on.
+Their 4B student reached 98% this way. We find out what a 0.8B keeps, and at what latency and cost.
+**Runbook: [docs/invoice.md](docs/invoice.md).** Everything specific to the task is in `config/`
+([docs/task.md](docs/task.md)).
 
 ## Architecture
 

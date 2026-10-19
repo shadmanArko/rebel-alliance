@@ -1,8 +1,9 @@
-"""Triage an incident from logs: logs in, schema-validated JSON report out.
+"""Run the task on one input: text in, schema-validated JSON out (+ the reasoning, if any).
 
-    uv run python demo/triage.py data/samples/incident_db_pool.log
-    cat some.log | uv run python demo/triage.py -
-    uv run python demo/triage.py --target base data/samples/incident_db_pool.log   # untrained model
+    uv run python demo/triage.py data/samples/invoice_hold_price.txt
+    cat input.txt | uv run python demo/triage.py -
+    uv run python demo/triage.py --target base data/samples/invoice_hold_price.txt   # untrained
+    uv run python demo/triage.py --show-reasoning data/samples/invoice_hold_total.txt
 """
 
 from __future__ import annotations
@@ -19,21 +20,24 @@ from slmkit.metrics import parse_json
 from slmkit.settings import output_schema
 
 
-def triage(logs: str, target: str = "tuned") -> tuple[dict | None, str, float]:
-    completion = ModelClient(resolve_target(target)).complete(logs)
-    return parse_json(completion.text), completion.text, completion.latency_s
+def triage(text: str, target: str = "tuned") -> tuple[dict | None, str, float, str]:
+    completion = ModelClient(resolve_target(target)).complete(text)
+    return parse_json(completion.text), completion.text, completion.latency_s, completion.reasoning
 
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("logfile", help="path to a log file, or - for stdin")
+    ap.add_argument("logfile", help="path to an input file, or - for stdin")
     ap.add_argument("--target", default="tuned", choices=["tuned", "base", "teacher"])
+    ap.add_argument("--show-reasoning", action="store_true", help="print the thinking block to stderr")
     args = ap.parse_args()
 
     logs = sys.stdin.read() if args.logfile == "-" else Path(args.logfile).read_text()
     if not logs.strip():
         sys.exit("ERROR: empty input")
-    report, raw, latency = triage(logs, args.target)
+    report, raw, latency, reasoning = triage(logs, args.target)
+    if args.show_reasoning and reasoning:
+        print(f"--- reasoning ---\n{reasoning}\n-----------------", file=sys.stderr)
     if report is None:
         print(raw)
         sys.exit("ERROR: model output is not valid JSON")

@@ -58,3 +58,23 @@ def system_prompt() -> str:
 @cache
 def output_schema() -> dict:
     return json.loads((CONFIG_DIR / "schema.json").read_text())
+
+
+@cache
+def training_config() -> dict:
+    import yaml
+
+    return yaml.safe_load((CONFIG_DIR / "config.yaml").read_text())
+
+
+def student_thinking() -> bool:
+    """Serve the student the way it was trained. STUDENT_THINKING=0/1 overrides config.yaml
+    (e.g. when the pod serves the adapter from config/config-no-thinking.yaml)."""
+    override = env("STUDENT_THINKING")
+    if override is not None:
+        return override.lower() in ("1", "true", "yes")
+    return bool(training_config()["base"].get("enable_thinking", False))
+
+
+def max_completion_tokens() -> int:
+    return int((training_config().get("tuning") or {}).get("max_completion_length", 2048))

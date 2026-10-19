@@ -1,45 +1,21 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "IncidentReport",
+  "title": "InvoiceDecision",
   "type": "object",
   "additionalProperties": false,
   "required": [
-    "severity",
-    "category",
-    "affected_service",
-    "summary",
-    "probable_root_cause",
-    "suggested_actions",
-    "requires_escalation"
+    "decision"
   ],
   "properties": {
-    "severity": {
-      "type": "string",
-      "enum": ["SEV1", "SEV2", "SEV3", "SEV4"]
-    },
-    "category": {
+    "decision": {
       "type": "string",
       "enum": [
-        "database",
-        "network",
-        "auth",
-        "storage",
-        "compute",
-        "application",
-        "deployment",
-        "third_party",
-        "unknown"
+        "approve",
+        "hold_no_po",
+        "hold_quantity",
+        "hold_price",
+        "hold_total"
       ]
-    },
-    "affected_service": { "type": "string" },
-    "summary": { "type": "string", "maxLength": 200 },
-    "probable_root_cause": { "type": "string" },
-    "suggested_actions": {
-      "type": "array",
-      "items": { "type": "string" },
-      "minItems": 1,
-      "maxItems": 5
-    },
-    "requires_escalation": { "type": "boolean" }
+    }
   }
 }

@@ -1,0 +1,36 @@
+INVOICE MESSAGE
+From: ar@marlowpackaging.com
+Subject: Marlow Packaging invoice MA-80280
+
+Hi Northwind AP team,
+
+Please find our invoice MA-80280 against your order PO-49545:
+
+- 20 x Hex bolt M10 x 40, box of 200 @ USD 47.59 = USD 951.80
+- 24 x LED HIGHBAY 150W @ USD 129.00 = USD 3,096.00
+- 20 x WRAP PALLET 18IN RL @ USD 23.75 = USD 475.00
+- 20 x 48 mm packing tape (case of 36 rolls) @ USD 58.00 = USD 1,160.00
+- 20 x CUT DISC 125MM PK25 @ USD 31.20 = USD 624.00
+- 20 x GLOVES NITRILE BX/100 @ USD 12.50 = USD 250.00
+
+Total due: USD 6,466.80
+
+Kind regards,
+Accounts Receivable, Marlow Packaging
+
+PURCHASE ORDER (ERP)
+PO-49545 | Vendor: Marlow Packaging | Freight: may be added by the vendor
+1. Hex bolt M10 x 40, box of 200 | qty 20 | unit USD 44.90
+2. LED high bay light 150 W | qty 24 | unit USD 129.00
+3. Pallet wrap, 18 in roll | qty 20 | unit USD 23.75
+4. Packing tape 48 mm, case of 36 | qty 20 | unit USD 58.00
+5. Cutting disc 125 mm, pack of 25 | qty 20 | unit USD 31.20
+6. Nitrile gloves, box of 100 | qty 20 | unit USD 12.50
+
+GOODS RECEIPT (ERP) for PO-49545
+1. Hex bolt M10 x 40, box of 200 | received 20
+2. LED high bay light 150 W | received 24
+3. Pallet wrap, 18 in roll | received 20
+4. Packing tape 48 mm, case of 36 | received 20
+5. Cutting disc 125 mm, pack of 25 | received 20
+6. Nitrile gloves, box of 100 | received 20
