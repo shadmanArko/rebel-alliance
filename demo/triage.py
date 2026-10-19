@@ -21,7 +21,8 @@ from slmkit.settings import output_schema
 
 
 def triage(text: str, target: str = "tuned") -> tuple[dict | None, str, float, str]:
-    completion = ModelClient(resolve_target(target)).complete(text)
+    # source="demo" tags the Langfuse trace (if enabled); web.py calls this too
+    completion = ModelClient(resolve_target(target), source="demo").complete(text)
     return parse_json(completion.text), completion.text, completion.latency_s, completion.reasoning
 
 

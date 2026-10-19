@@ -61,7 +61,9 @@ def score_predictions(path: Path) -> dict:
 
 
 def score_endpoint(target_name: str, rows, workers: int, guided: bool) -> dict:
-    client = ModelClient(resolve_target(target_name), guided_json=guided)
+    # Langfuse (if enabled): tag "eval" and one session per run, so a run can be opened as a whole
+    run_id = f"eval-{target_name}-{datetime.now(UTC).strftime('%Y%m%dT%H%M%SZ')}"
+    client = ModelClient(resolve_target(target_name), guided_json=guided, source="eval", session_id=run_id)
 
     def run(row):
         user, ref = row

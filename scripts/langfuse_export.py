@@ -82,7 +82,10 @@ def _text_from_output(value) -> str | None:
     if isinstance(value, dict):
         if "choices" in value:
             value = value["choices"][0].get("message", {})
-        return value.get("content")
+        if "content" in value:
+            return value["content"]
+        if "role" not in value:  # a bare JSON answer that Langfuse stored parsed
+            return json.dumps(value, ensure_ascii=False)
     return None
 
 
