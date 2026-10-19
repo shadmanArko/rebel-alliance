@@ -1,0 +1,3 @@
+{"ts":"2026-10-19T03:10:00Z","level":"warn","svc":"metrics-collector","msg":"disk usage high","mount":"/var/lib/metrics","used_pct":86}
+{"ts":"2026-10-19T03:20:00Z","level":"warn","svc":"metrics-collector","msg":"disk usage high","mount":"/var/lib/metrics","used_pct":87}
+{"ts":"2026-10-19T03:20:02Z","level":"info","svc":"metrics-collector","msg":"compaction finished","freed_mb":120}

@@ -1,0 +1,7 @@
+2026-10-19T14:02:11.204Z INFO  orders-api  request_id=8f2a GET /v1/orders/1182 200 41ms
+2026-10-19T14:02:13.887Z WARN  orders-api  db pool: 48/50 connections in use, waiting=12
+2026-10-19T14:02:15.002Z ERROR orders-api  request_id=91bc POST /v1/orders 500 30012ms
+sqlalchemy.exc.TimeoutError: QueuePool limit of size 50 overflow 0 reached, connection timed out, timeout 30.00
+2026-10-19T14:02:15.441Z ERROR orders-api  request_id=91c0 GET /v1/orders 500 30001ms
+2026-10-19T14:02:16.120Z LOG   postgres    duration: 48211.552 ms  statement: SELECT * FROM order_items oi JOIN products p ON ...
+2026-10-19T14:02:18.300Z WARN  lb          upstream orders-api 5xx rate 37% over 60s

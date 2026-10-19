@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "IncidentReport",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "severity",
+    "category",
+    "affected_service",
+    "summary",
+    "probable_root_cause",
+    "suggested_actions",
+    "requires_escalation"
+  ],
+  "properties": {
+    "severity": {
+      "type": "string",
+      "enum": ["SEV1", "SEV2", "SEV3", "SEV4"]
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "database",
+        "network",
+        "auth",
+        "storage",
+        "compute",
+        "application",
+        "deployment",
+        "third_party",
+        "unknown"
+      ]
+    },
+    "affected_service": { "type": "string" },
+    "summary": { "type": "string", "maxLength": 200 },
+    "probable_root_cause": { "type": "string" },
+    "suggested_actions": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1,
+      "maxItems": 5
+    },
+    "requires_escalation": { "type": "boolean" }
+  }
+}

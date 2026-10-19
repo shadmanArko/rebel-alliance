@@ -1,0 +1,28 @@
+# Distil Labs training config. Reference: docs/distil-notes.md
+# Only base.task is required by the platform; everything that matters is set explicitly
+# so nothing silently falls back to a library default.
+base:
+  task: question-answering            # text in -> JSON out (task-types: QA is the catch-all)
+  student_model_name: Qwen3.5-0.8B    # the ~0.8B student we fine-tune
+  teacher_model_name: zai.glm-5.3-low-thinking
+  random_seed: 123
+
+evaluation:
+  # The judge is fixed for the whole project: scores from two judges are not comparable.
+  llm_as_a_judge_model_name: zai.glm-5.3-low-thinking
+
+synthgen:
+  output_is_json: true                # every assistant answer must parse as JSON
+  teacher_temperature: 0.7            # reasoning teachers require [0.5, 0.7]
+  train_generation_target: 2000       # platform default is 10000; plenty for a narrow task
+  test_generation_target: 0
+  validation_max_total_length: 30000  # raise if log excerpts get long
+
+trace_processing:
+  observation_format: openai_messages # what scripts/langfuse_export.py writes
+  num_test_relabelled: 150            # traces -> locked test set
+  num_train_relabelled: 150           # traces -> train rows (synthgen adds the rest)
+
+tuning:
+  num_train_epochs: 4
+  lora_r: 64                          # serve/ passes this as --max-lora-rank

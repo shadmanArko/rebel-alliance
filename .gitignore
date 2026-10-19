@@ -1,0 +1,45 @@
+# Secrets
+.env
+.env.*
+!.env.example
+*-key.json
+*api-key*.json
+
+# Python / uv
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# Data: only tiny hand-made samples are tracked
+data/*
+!data/samples/
+!data/raw/
+data/raw/*
+!data/raw/.gitkeep
+!data/README.md
+
+# Distil run state, downloads, predictions (per account, regenerate with make)
+runs/*
+!runs/.gitkeep
+.distil-state
+
+# Model weights / artifacts
+models/
+*.tar
+*.safetensors
+*.bin
+*.gguf
+*.pt
+*.pth
+*.onnx
+
+# Eval scratch output (eval/results.json is tracked on purpose)
+eval/out/
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/
