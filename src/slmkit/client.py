@@ -11,6 +11,7 @@ from dataclasses import dataclass
 
 from openai import OpenAI
 
+from slmkit import tracing
 from slmkit.settings import (
     die,
     env,
@@ -59,13 +60,24 @@ class Completion:
 
 
 class ModelClient:
-    def __init__(self, target: Target, guided_json: bool = True, timeout: float = 120.0):
+    def __init__(
+        self,
+        target: Target,
+        guided_json: bool = True,
+        timeout: float = 120.0,
+        source: str = "cli",
+        session_id: str | None = None,
+    ):
+        """`source` (eval, demo, ...) and `session_id` only label Langfuse traces, if enabled."""
         self.target = target
         self.guided_json = guided_json
+        self.source = source
+        self.session_id = session_id
         self.client = OpenAI(base_url=target.base_url, api_key=target.api_key, timeout=timeout)
 
     def complete(self, user_content: str) -> Completion:
         kwargs: dict = {}
+        thinking: bool | None = None  # None: we don't control the teacher's thinking
         if self.target.is_student:
             thinking = student_thinking()
             extra: dict = {"chat_template_kwargs": {"enable_thinking": thinking}}
@@ -85,19 +97,53 @@ class ModelClient:
             {"role": "system", "content": system_prompt()},
             {"role": "user", "content": user_content},
         ]
-        start = time.perf_counter()
-        resp = self.client.chat.completions.create(
-            model=self.target.model, messages=messages, **kwargs
-        )
-        latency = time.perf_counter() - start
-        usage = resp.usage
-        message = resp.choices[0].message
-        # vLLM's reasoning parser returns the thinking as reasoning_content (newer: reasoning)
-        reasoning = getattr(message, "reasoning_content", None) or getattr(message, "reasoning", None)
-        return Completion(
-            text=message.content or "",
-            reasoning=reasoning or "",
-            latency_s=latency,
-            prompt_tokens=getattr(usage, "prompt_tokens", 0) or 0,
-            completion_tokens=getattr(usage, "completion_tokens", 0) or 0,
-        )
+        thinking_label = "n/a" if thinking is None else str(thinking).lower()
+        with tracing.generation(
+            name=self.target.name,
+            model=self.target.model,
+            messages=messages,
+            model_parameters={
+                k: kwargs[k] for k in ("temperature", "top_p", "max_tokens") if k in kwargs
+            },
+            tags=[self.source, self.target.name, f"thinking:{thinking_label}"],
+            metadata={
+                "target": self.target.name,
+                "source": self.source,
+                "thinking": thinking_label,
+                "guided_json": str("response_format" in kwargs).lower(),
+            },
+            session_id=self.session_id,
+        ) as gen:
+            start = time.perf_counter()
+            resp = self.client.chat.completions.create(
+                model=self.target.model, messages=messages, **kwargs
+            )
+            latency = time.perf_counter() - start
+            usage = resp.usage
+            message = resp.choices[0].message
+            # vLLM's reasoning parser returns the thinking as reasoning_content (newer: reasoning)
+            reasoning = getattr(message, "reasoning_content", None) or getattr(message, "reasoning", None)
+            completion = Completion(
+                text=message.content or "",
+                reasoning=reasoning or "",
+                latency_s=latency,
+                prompt_tokens=getattr(usage, "prompt_tokens", 0) or 0,
+                completion_tokens=getattr(usage, "completion_tokens", 0) or 0,
+            )
+            if gen is not None:
+                # An assistant message, not the bare text: a JSON answer sent as a string can come
+                # back from the API parsed into an object, while scripts/langfuse_export.py
+                # always finds the answer under "content".
+                gen.update(
+                    output={"role": "assistant", "content": completion.text},
+                    usage_details={
+                        "input": completion.prompt_tokens,
+                        "output": completion.completion_tokens,
+                    },
+                    metadata={
+                        "latency_s": round(latency, 4),
+                        "thinking": thinking_label,
+                        "reasoning_content": completion.reasoning or None,
+                    },
+                )
+        return completion

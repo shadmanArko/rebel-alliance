@@ -67,3 +67,33 @@ instead of the 40 seed rows. Then run `make dataset`, then `SYNTH=0 make trainse
 This task has no production traffic, so Langfuse doesn't supply the data. Use it to trace every model call
 (teacher, base, tuned) from the eval and the demo. That gives us latency and cost dashboards, and a record of
 the calls to feed into a next iteration (`make traces`).
+
+**Turning it on.** Set `LANGFUSE_PUBLIC_KEY` and `LANGFUSE_SECRET_KEY` in `.env` (and `LANGFUSE_HOST` if you
+self-host). That's all: every `ModelClient.complete` call (`src/slmkit/client.py`, via `src/slmkit/tracing.py`)
+is then sent as one Langfuse generation. With either key empty, tracing is off: `langfuse` is not imported and
+nothing leaves the machine. Spans are flushed at exit, so a single `make invoke` still shows up.
+
+**What each generation holds.**
+
+| Field | Value |
+| --- | --- |
+| name | the target: `teacher`, `base` or `tuned` (also the trace name) |
+| model | the served model name (`TEACHER_MODEL`, `base` or `model`) |
+| input | the messages list (system prompt + invoice text) |
+| output | `{"role": "assistant", "content": "{\"decision\": ...}"}` |
+| usage | prompt (`input`) and completion (`output`) tokens |
+| model parameters | `temperature`, `top_p`, `max_tokens` when we set them |
+| metadata | `latency_s`, `thinking`, `reasoning_content` (the thinking block, if any), `guided_json` |
+| latency | the span's own duration, so Langfuse's latency charts work as-is |
+
+**Filtering.** Each trace is tagged with where it came from, the target, and whether thinking was on:
+
+- `eval` + one session per run (`eval-<target>-<UTC timestamp>`): `eval/run_eval.py --endpoint`, i.e.
+  `make eval-teacher`, `make eval-base`, `make eval-tuned`
+- `demo`: `make invoke` and the web demo (`make demo`)
+- `thinking:true` / `thinking:false` for the students, `thinking:n/a` for the teacher (we don't set its thinking)
+
+**Feeding a next iteration.** `make traces` reads these generations back into `data/traces.jsonl`. Filter with
+`LANGFUSE_GENERATION_NAME=teacher` to export only teacher answers (the useful labels); failed calls are logged
+with level `ERROR` and skipped by the export. Watch out: the export does not filter by tag, so a run
+without a name filter mixes eval and demo calls, and base/tuned outputs are student guesses, not labels.
