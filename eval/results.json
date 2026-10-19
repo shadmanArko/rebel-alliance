@@ -1,1 +1,16 @@
-{}
+{
+  "teacher": {
+    "distil_predictions": {
+      "exact_match": 0.97,
+      "field_f1": 0.97,
+      "json_valid": 1.0,
+      "key_field_acc": 0.97,
+      "n": 100,
+      "per_field": {
+        "decision": 0.97
+      },
+      "schema_valid": 1.0,
+      "updated_at": "2026-10-19T18:27:38+00:00"
+    }
+  }
+}
