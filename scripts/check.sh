@@ -42,7 +42,7 @@ fi
 echo ".env"
 if [ -f .env ]; then pass ".env exists"; else fail ".env" "make setup (copies .env.example)"; fi
 for key in LANGFUSE_PUBLIC_KEY LANGFUSE_SECRET_KEY LANGFUSE_HOST; do
-  if [ -n "$(env_value "$key")" ]; then pass "$key"; else fail "$key" "fill in .env (needed for 'make traces')"; fi
+  if [ -n "$(env_value "$key")" ]; then pass "$key"; else note "$key" "only needed for 'make traces' (the invoice task starts from files)"; fi
 done
 # Serving and teacher keys are only needed later in the pipeline.
 for key in SERVE_BASE_URL SERVE_API_KEY RUNPOD_GPU_USD_PER_HOUR; do

@@ -36,7 +36,7 @@ SERVE_BASE_URL=https://<pod-id>-8000.proxy.runpod.net/v1
 SERVE_API_KEY=<the VLLM_API_KEY you used>
 ```
 ```bash
-make invoke                      # tuned model on a sample incident
+make invoke                      # tuned model on a sample invoice
 make invoke TARGET=base          # untrained model, same input
 make eval-base eval-tuned compare
 ```

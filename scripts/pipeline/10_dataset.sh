@@ -14,7 +14,7 @@ found=0
 for f in traces train test; do
   if [ -s "$REPO_ROOT/data/$f.jsonl" ]; then
     cp "$REPO_ROOT/data/$f.jsonl" "$bundle/"
-    info "  $f.jsonl: $(wc -l < "$REPO_ROOT/data/$f.jsonl" | tr -d ' ') rows"
+    info "  $f.jsonl: $(grep -c '' "$REPO_ROOT/data/$f.jsonl") rows"
     found=1
   fi
 done

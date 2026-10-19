@@ -11,7 +11,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 from triage import triage  # demo/ is on sys.path when run as `python demo/web.py`
 
-PAGE = """<!doctype html><html><head><meta charset="utf-8"><title>Incident triage demo</title>
+PAGE = """<!doctype html><html><head><meta charset="utf-8"><title>Invoice approval demo</title>
 <style>
  body{font:15px system-ui,sans-serif;max-width:1100px;margin:24px auto;padding:0 16px;color:#111}
  textarea{width:100%;height:220px;font:13px ui-monospace,monospace}
@@ -19,9 +19,9 @@ PAGE = """<!doctype html><html><head><meta charset="utf-8"><title>Incident triag
  pre{background:#f4f4f5;padding:12px;border-radius:8px;white-space:pre-wrap;min-height:120px}
  button{padding:8px 18px;font-size:15px;margin:8px 0}
 </style></head><body>
-<h2>Incident triage: base 0.8B vs tuned 0.8B</h2>
-<textarea id="logs" placeholder="Paste server logs here"></textarea><br>
-<button onclick="go()">Triage</button>
+<h2>Invoice approval: base 0.8B vs tuned 0.8B</h2>
+<textarea id="logs" placeholder="Paste INVOICE MESSAGE + PURCHASE ORDER (ERP) + GOODS RECEIPT (ERP) here"></textarea><br>
+<button onclick="go()">Decide</button>
 <div class="cols"><div><h3>Base</h3><pre id="base"></pre></div>
 <div><h3>Tuned</h3><pre id="tuned"></pre></div></div>
 <script>
@@ -43,9 +43,10 @@ class Handler(BaseHTTPRequestHandler):
 
         def run(target):
             try:
-                report, raw, latency = triage(logs, target)
+                report, raw, latency, reasoning = triage(logs, target)
                 body = json.dumps(report, indent=2) if report else raw
-                return f"{body}\n\n({latency:.2f}s)"
+                thinking = f"\n\n--- reasoning ---\n{reasoning}" if reasoning else ""
+                return f"{body}\n\n({latency:.2f}s){thinking}"
             except Exception as exc:
                 return f"error: {exc}"
 

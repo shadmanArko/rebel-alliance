@@ -1,0 +1,29 @@
+INVOICE MESSAGE
+From: ar@tridentfasteners.com
+Subject: INV TF-81762 / PO-64551
+
+INVOICE TF-81762   DATE 2026-09-17
+CUST PO: PO-64551
+LN  ITEM | QTY | UNIT | AMOUNT
+1   PADS ABSORB BALE | 12 | 71.25 | 855.00
+2   SFTY GLASSES CLR | 24 | 8.40 | 201.60
+3   LED HIGHBAY 150W | 20 | 129.00 | 2,580.00
+4   GLOVES NITRILE BX/100 | 10 | 12.50 | 125.00
+5   BOX CORR 600X400X400 | 24 | 3.85 | 92.40
+TOTAL DUE USD | 3,854.00
+WE RECEIVED YOUR PAYMENT OF USD 5,033.10 FOR LAST MONTH'S INVOICE, THANK YOU.
+
+PURCHASE ORDER (ERP)
+PO-64551 | Vendor: Trident Fasteners | Freight: not allowed
+1. Corrugated box 600x400x400 | qty 24 | unit USD 3.85
+2. Safety glasses, clear lens | qty 24 | unit USD 8.40
+3. Nitrile gloves, box of 100 | qty 10 | unit USD 12.50
+4. LED high bay light 150 W | qty 20 | unit USD 129.00
+5. Absorbent pads, bale | qty 12 | unit USD 71.25
+
+GOODS RECEIPT (ERP) for PO-64551
+1. Corrugated box 600x400x400 | received 24
+2. Safety glasses, clear lens | received 24
+3. Nitrile gloves, box of 100 | received 10
+4. LED high bay light 150 W | received 20
+5. Absorbent pads, bale | received 12

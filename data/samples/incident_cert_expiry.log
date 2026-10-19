@@ -1,4 +1,0 @@
-Oct 19 09:00:01 edge-gw-2 nginx[1123]: 2026/10/19 09:00:01 [error] 1123#0: *88123 SSL_do_handshake() failed (SSL: error:0A000086:SSL routines::certificate verify failed) while SSL handshaking to upstream, upstream: "https://10.0.4.17:8443/auth/token"
-Oct 19 09:00:01 edge-gw-2 nginx[1123]: 2026/10/19 09:00:01 [error] 1123#0: *88124 upstream SSL certificate expired (notAfter=Oct 19 08:59:59 2026 GMT) for "auth-service.internal"
-Oct 19 09:00:02 auth-service[771]: level=info msg="health ok" uptime=1209331s
-Oct 19 09:00:04 edge-gw-2 nginx[1123]: 10.1.2.3 - - [19/Oct/2026:09:00:04 +0000] "POST /login HTTP/1.1" 502 157

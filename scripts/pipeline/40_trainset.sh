@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Fill the train split on top of the test-set dataset:
-#   1) relabel unused traces into train   (skip with RELABEL=0)
+#   1) relabel unused traces into train   (only when data/traces.jsonl exists; RELABEL=0/1 forces)
 #   2) synthetic data generation          (skip with SYNTH=0)
 # SMOKE=1 runs the synthetic step on 128 rows only, as a check of the config and prompt.
 source "$(dirname "$0")/../lib/common.sh"
@@ -8,7 +8,9 @@ require_distil
 
 parent="$(state_require TESTSET_DATASET_ID 'make testset')"
 
-if [ "${RELABEL:-1}" = "1" ]; then
+default_relabel=0
+[ -s "$REPO_ROOT/data/traces.jsonl" ] && default_relabel=1
+if [ "${RELABEL:-$default_relabel}" = "1" ]; then
   id="$(reuse_or_empty TRAIN_RELABEL_ID dataset)"
   if [ -z "$id" ]; then
     confirm_spend "relabel traces -> train split" datasets_from_datasets_relabel_traces_post

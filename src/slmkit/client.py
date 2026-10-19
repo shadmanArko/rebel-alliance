@@ -11,7 +11,18 @@ from dataclasses import dataclass
 
 from openai import OpenAI
 
-from slmkit.settings import die, env, output_schema, system_prompt
+from slmkit.settings import (
+    die,
+    env,
+    max_completion_tokens,
+    output_schema,
+    student_thinking,
+    system_prompt,
+)
+
+# Qwen3.5 vendor sampling for thinking mode; Distil evaluates reasoning students with it.
+THINKING_SAMPLING = {"temperature": 1.0, "top_p": 0.95}
+THINKING_EXTRA = {"top_k": 20}
 
 
 @dataclass
@@ -41,6 +52,7 @@ def resolve_target(name: str) -> Target:
 @dataclass
 class Completion:
     text: str
+    reasoning: str
     latency_s: float
     prompt_tokens: int
     completion_tokens: int
@@ -55,9 +67,15 @@ class ModelClient:
     def complete(self, user_content: str) -> Completion:
         kwargs: dict = {}
         if self.target.is_student:
-            extra: dict = {"chat_template_kwargs": {"enable_thinking": False}}
+            thinking = student_thinking()
+            extra: dict = {"chat_template_kwargs": {"enable_thinking": thinking}}
+            kwargs["max_tokens"] = max_completion_tokens()
+            if thinking:
+                kwargs.update(THINKING_SAMPLING)
+                extra.update(THINKING_EXTRA)
             if self.guided_json:
-                # vLLM structured outputs: decoding is constrained to the schema.
+                # vLLM structured outputs: the answer is constrained to the schema. With the
+                # reasoning parser on (serve/start_vllm.sh), the thinking block is left free.
                 kwargs["response_format"] = {
                     "type": "json_schema",
                     "json_schema": {"name": "output", "schema": output_schema()},
@@ -73,8 +91,12 @@ class ModelClient:
         )
         latency = time.perf_counter() - start
         usage = resp.usage
+        message = resp.choices[0].message
+        # vLLM's reasoning parser returns the thinking as reasoning_content (newer: reasoning)
+        reasoning = getattr(message, "reasoning_content", None) or getattr(message, "reasoning", None)
         return Completion(
-            text=resp.choices[0].message.content or "",
+            text=message.content or "",
+            reasoning=reasoning or "",
             latency_s=latency,
             prompt_tokens=getattr(usage, "prompt_tokens", 0) or 0,
             completion_tokens=getattr(usage, "completion_tokens", 0) or 0,
