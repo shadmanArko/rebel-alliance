@@ -4,11 +4,17 @@
 `{"decision": "approve | hold_no_po | hold_quantity | hold_price | hold_total"}`.
 **Score:** exact match of the decision on the same 100 held-out test invoices, scored by Distil Labs.
 
-| Model | Size | Accuracy (exact match) | Judge (Distil) | Source |
-|---|---|---|---|---|
-| Teacher: GLM 5.3 high-thinking | very large | **97 / 100** | 96% | our Distil teacher evaluation `4d15b316` |
-| Base Qwen3.5-0.8B, untrained | 0.8B | _pending_ | _pending_ | Distil `slm metrics` (base) for SLM `9c0ca97f` |
-| **Tuned Qwen3.5-0.8B, thinking on** | 0.8B | _pending_ | _pending_ | Distil `slm metrics` / predictions for SLM `9c0ca97f` |
+| Model | Size | Correct decisions (judge vs reference) | Exact JSON match | Valid JSON | Source |
+|---|---|---|---|---|---|
+| Teacher: GLM 5.3 high-thinking | very large | **97 / 100** | 97% | 100% | teacher evaluation `4d15b316` |
+| Base Qwen3.5-0.8B, untrained | 0.8B | **41 / 100** | 2% | (n/a) | `slm metrics` base, SLM `9c0ca97f` |
+| **Tuned Qwen3.5-0.8B, thinking on** | 0.8B | **90 / 100** | 90% | 100% | `slm metrics` + predictions, SLM `9c0ca97f` |
+
+**The tuned 0.8B keeps 93% of the teacher's accuracy (90 / 97)** and closes 87% of the base-to-teacher gap
+(`(90 − 41) / (97 − 41)`), so it counts as a deploy candidate. The untrained model's 2% exact match is mostly format
+failure: its answers are not the bare JSON object. The judge column scores the decision itself.
+
+Training: 4 epochs over 4,156 rows, final training loss ≈ 0.023 (from 0.47). It took about 2 hours on Distil Labs.
 
 Reference from Distil's published benchmark (Qwen3.5-**4B**, same test set): untrained 53, tuned without
 thinking 84, **tuned with thinking 98**.

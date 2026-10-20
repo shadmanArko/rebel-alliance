@@ -12,5 +12,19 @@
       "schema_valid": 1.0,
       "updated_at": "2026-10-19T18:27:38+00:00"
     }
+  },
+  "tuned": {
+    "distil_predictions": {
+      "exact_match": 0.9,
+      "field_f1": 0.9,
+      "json_valid": 1.0,
+      "key_field_acc": 0.9,
+      "n": 100,
+      "per_field": {
+        "decision": 0.9
+      },
+      "schema_valid": 1.0,
+      "updated_at": "2026-10-20T07:31:13+00:00"
+    }
   }
 }
